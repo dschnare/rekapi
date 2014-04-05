@@ -73,7 +73,7 @@ rekapiModules.push(function (context) {
     var latestProperties = {};
 
     _.each(actor._propertyTracks, function (propertyTrack, propertyName) {
-      var previousKeyframeProperty = null;
+      var previousKeyframeProperty = propertyTrack[0] || null;
       var i = 0, len = propertyTrack.length, keyframeProperty;
 
       for (i; i < len; i++) {
