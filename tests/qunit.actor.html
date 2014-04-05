@@ -260,6 +260,22 @@
     });
 
 
+    test('Handles not-yet-reached keyframes appropriately', function () {
+      var actor = new Rekapi.Actor();
+
+      actor.keyframe(0, {
+        x: 1
+      }).keyframe(1000, {
+        y: 10
+      });
+
+      actor._updateState(500);
+
+      equal(actor.get().y, 10,
+          'Keyframe 0 for Y was implicitly defined and tweened against');
+    });
+
+
     module('_addKeyframeProperty');
 
 
