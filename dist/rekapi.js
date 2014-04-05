@@ -1,4 +1,4 @@
-/*! rekapi - v1.2.0 - 2014-03-29 - http://rekapi.com */
+/*! rekapi - v1.2.1 - 2014-04-05 - http://rekapi.com */
 /*!
  * Rekapi - Rewritten Kapi.
  * https://github.com/jeremyckahn/rekapi
@@ -722,7 +722,7 @@ rekapiModules.push(function (context) {
     var latestProperties = {};
 
     _.each(actor._propertyTracks, function (propertyTrack, propertyName) {
-      var previousKeyframeProperty = null;
+      var previousKeyframeProperty = propertyTrack[0] || null;
       var i = 0, len = propertyTrack.length, keyframeProperty;
 
       for (i; i < len; i++) {
@@ -1529,14 +1529,22 @@ rekapiModules.push(function (context) {
     var fromObj = {};
     var toObj = {};
     var value;
+    var nextProperty = this.nextProperty;
+    var correctedMillisecond = Math.max(millisecond, this.millisecond);
 
-    if (this.nextProperty) {
+    if (nextProperty) {
+      correctedMillisecond =
+          Math.min(correctedMillisecond, nextProperty.millisecond);
+
       fromObj[this.name] = this.value;
-      toObj[this.name] = this.nextProperty.value;
-      var delta = this.nextProperty.millisecond - this.millisecond;
-      var interpolatedPosition = (millisecond - this.millisecond) / delta;
+      toObj[this.name] = nextProperty.value;
+
+      var delta = nextProperty.millisecond - this.millisecond;
+      var interpolatedPosition =
+          (correctedMillisecond - this.millisecond) / delta;
+
       value = interpolate(fromObj, toObj, interpolatedPosition,
-          this.nextProperty.easing)[this.name];
+          nextProperty.easing)[this.name];
     } else {
       value = this.value;
     }

@@ -63,15 +63,16 @@ rekapiModules.push(function (context) {
     var correctedMillisecond = Math.max(millisecond, this.millisecond);
 
     if (nextProperty) {
-
       correctedMillisecond =
           Math.min(correctedMillisecond, nextProperty.millisecond);
 
       fromObj[this.name] = this.value;
       toObj[this.name] = nextProperty.value;
+
       var delta = nextProperty.millisecond - this.millisecond;
       var interpolatedPosition =
           (correctedMillisecond - this.millisecond) / delta;
+
       value = interpolate(fromObj, toObj, interpolatedPosition,
           nextProperty.easing)[this.name];
     } else {
