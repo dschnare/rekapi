@@ -76,7 +76,7 @@
     });
 
 
-    test('Keyframes inherit missing properties from the previous keyframe',
+    test('Early-ending keyframe tracks produce a useful value after they have ended',
         function () {
 
       var testRekapi
@@ -88,33 +88,12 @@
       testActor.keyframe(0,{
         'x': 100
       }).keyframe(1000, {
-        // Nothing!
+        'y': 200
       });
 
       testActor._updateState(500);
-      equal(testActor.get().x, undefined,
+      equal(testActor.get().x, 100,
           'Value only has a start point, therefore a calculated midpoint is undefined.');
-    });
-
-
-    test('Tweens are only valid if there is an end point',
-      function () {
-
-      var testRekapi
-          ,testActor;
-
-      testRekapi = setupTestRekapi();
-      testActor = setupTestActor(testRekapi);
-
-      testActor.keyframe(0,{
-        // Nothing!
-      }).keyframe(1000, {
-        'x': 100
-      });
-
-      testActor._updateState(500);
-      equal(testActor.get().x, undefined,
-          'Value only has an end point, therefore a calculated midpoint is undefined.');
     });
 
 
@@ -260,7 +239,28 @@
     });
 
 
-    test('Handles not-yet-reached keyframes appropriately', function () {
+    test('Handles not-yet-reached keyframes appropriately (single track)',
+      function () {
+
+      var testRekapi
+          ,testActor;
+
+      testRekapi = setupTestRekapi();
+      testActor = setupTestActor(testRekapi);
+
+      testActor.keyframe(0,{
+        // Nothing!
+      }).keyframe(1000, {
+        'x': 100
+      });
+
+      testActor._updateState(500);
+      equal(testActor.get().x, 100,
+          'Value only has an end point, therefore a calculated midpoint is undefined.');
+    });
+
+
+    test('Handles not-yet-reached keyframes appropriately (multiple tracks)', function () {
       var actor = new Rekapi.Actor();
 
       actor.keyframe(0, {
