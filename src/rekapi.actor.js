@@ -30,6 +30,11 @@ rekapiModules.push(function (context) {
     var list = actor._timelinePropertyCacheKeys;
 
     var i, len = list.length;
+
+    if (len === 1) {
+      return 0;
+    }
+
     for (i = 1; i < len; i++) {
       if (list[i] >= millisecond) {
         return (i - 1);
@@ -732,15 +737,22 @@ rekapiModules.push(function (context) {
   Actor.prototype._updateState = function (millisecond) {
     var startMs = this.getStart();
     var endMs = this.getEnd();
+    var interpolatedObject = {};
 
     millisecond = Math.min(endMs, millisecond);
 
-    if (startMs <= millisecond) {
-      var latestCacheId = getPropertyCacheIdForMillisecond(this, millisecond);
-      var propertiesToInterpolate =
-          this._timelinePropertyCache[this._timelinePropertyCacheKeys[
-          latestCacheId]];
-      var interpolatedObject = {};
+    var latestCacheId = getPropertyCacheIdForMillisecond(this, millisecond);
+    var propertiesToInterpolate =
+        this._timelinePropertyCache[this._timelinePropertyCacheKeys[
+        latestCacheId]];
+
+    if (startMs === endMs) {
+
+      _.each(propertiesToInterpolate, function (property, propertyName) {
+        interpolatedObject[propertyName] = property.value;
+      });
+
+    } else if (startMs <= millisecond) {
 
       _.each(propertiesToInterpolate, function (keyframeProperty, propName) {
         // TODO: Try to get rid of this null check
@@ -757,10 +769,11 @@ rekapiModules.push(function (context) {
                 keyframeProperty, interpolatedObject);
           }
         }
-      }, this);
 
-      this.set(interpolatedObject);
+      }, this);
     }
+
+    this.set(interpolatedObject);
 
     return this;
   };
