@@ -757,21 +757,17 @@ rekapiModules.push(function (context) {
     } else {
 
       _.each(propertiesToInterpolate, function (keyframeProperty, propName) {
-        // TODO: Try to get rid of this null check
-        if (keyframeProperty) {
-          if (this._beforeKeyframePropertyInterpolate !== noop) {
-            this._beforeKeyframePropertyInterpolate(keyframeProperty);
-          }
-
-          interpolatedObject[propName] =
-              keyframeProperty.getValueAt(millisecond);
-
-          if (this._afterKeyframePropertyInterpolate !== noop) {
-            this._afterKeyframePropertyInterpolate(
-                keyframeProperty, interpolatedObject);
-          }
+        if (this._beforeKeyframePropertyInterpolate !== noop) {
+          this._beforeKeyframePropertyInterpolate(keyframeProperty);
         }
 
+        interpolatedObject[propName] =
+            keyframeProperty.getValueAt(millisecond);
+
+        if (this._afterKeyframePropertyInterpolate !== noop) {
+          this._afterKeyframePropertyInterpolate(
+              keyframeProperty, interpolatedObject);
+        }
       }, this);
     }
 
