@@ -25,16 +25,17 @@ rekapiModules.push(function (context) {
    * @return {number} -1 if there is no property cache for the millisecond
    * (this should never happen).
    */
-  //TODO:  Oh noes, this is a linear search!  Maybe optimize it?
   function getPropertyCacheIdForMillisecond (actor, millisecond) {
     var list = actor._timelinePropertyCacheKeys;
 
     var i, len = list.length;
 
+    // If there is only one keyframe, use that
     if (len === 1) {
       return 0;
     }
 
+    //TODO:  Oh noes, this is a linear search!  Maybe optimize it?
     for (i = 1; i < len; i++) {
       if (list[i] >= millisecond) {
         return (i - 1);
@@ -748,11 +749,12 @@ rekapiModules.push(function (context) {
 
     if (startMs === endMs) {
 
+      // If there is only one keyframe, use that for the state of the actor
       _.each(propertiesToInterpolate, function (property, propertyName) {
         interpolatedObject[propertyName] = property.value;
       });
 
-    } else if (startMs <= millisecond) {
+    } else {
 
       _.each(propertiesToInterpolate, function (keyframeProperty, propName) {
         // TODO: Try to get rid of this null check
